@@ -47,6 +47,7 @@ async function getLedger(branch) {
 
 async function run() {
     try {
+        console.log('Hello World');
         // Get the JSON webhook payload for the event that triggered the workflow
         const payload = github.context.payload;
 
@@ -56,9 +57,12 @@ async function run() {
         // get the new ledger
         const newLedger = getLedger(payload.pull_request.head.ref);
 
+        console.log('aaa', oldLedger, newLedger);
+        console.log('get user')
         // get the user who is making the transaction
         const user = github.context.actor;
 
+        console.log('initialise')
         // total amounts circulating
         let oldSum = 0, newSum = 0;
 
