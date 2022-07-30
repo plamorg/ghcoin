@@ -69,7 +69,7 @@ async function run() {
         const oldLedger = await getLedger('plamorg', 'master');
 
         // get the new ledger
-        const newLedger = await getLedger(payload.pull_request.head.owner.login, payload.pull_request.head.ref);
+        const newLedger = await getLedger(payload.pull_request.head.repo.owner.login, payload.pull_request.head.ref);
 
         // get the user who is making the transaction
         const user = github.context.actor;
