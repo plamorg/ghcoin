@@ -1,10 +1,6 @@
 name: 'ghcoin Transaction'
 description: 'Validate and process a transaction made with ghcoin'
 inputs:
-    total-amount:   # total ghcoin in circulation
-      description: 'Total amount of ghcoin in circulation. The sum should be exactly this amount.'
-      required: false
-      default: '1000'
     repo-token:
       description: 'Github token'
       required: true

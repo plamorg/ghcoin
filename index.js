@@ -19,8 +19,13 @@ async function getLedger(branch) {
         console.log('octokit: ', octokitRes);
 
         const res = await fetch(octokitRes.data.download_url);
+        console.log(res);
+
         const ledgerCsv = await res.text();
+        console.log(ledgerCsv);
+
         const ledgerJsonRaw = await csv().fromString(ledgerCsv);
+        console.log(ledgerJsonRaw);
 
         let ledgerJson = {};
         for (let i of ledgerJsonRaw) {
