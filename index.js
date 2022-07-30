@@ -95,6 +95,8 @@ async function run() {
             }
         }
 
+        console.log('checked new ledger')
+
         for (let name in oldLedger) {
             // add amount to old sum
             oldSum += oldLedger[name];
@@ -105,6 +107,14 @@ async function run() {
                 break;
             }
         }
+
+        console.log('checked old ledger');
+
+        if (oldSum !== newSum) {
+            core.setFailed('Cannot modify total amount');
+        }
+
+        console.log('checked sum');
     } catch (error) {
         core.setFailed(error.message);
     }
