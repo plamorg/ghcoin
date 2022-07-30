@@ -13,7 +13,7 @@ async function getLedger(branch) {
             owner: 'plamorg',
             repo: 'ghcoin',
             path: 'ledger.csv',
-            branch,
+            ref: branch,
         });
         
         console.log('octokit: ', octokitRes);
