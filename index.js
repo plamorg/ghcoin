@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 const core = require('@actions/core');
 const github = require('@actions/github');
-const csvtojson = require('csvtojson');
+const csv = require('csvtojson');
 const totalAmount = core.getInput('total-amount');
 const repoToken = core.getInput('repo-token');
 const octokit = github.getOctokit(repoToken);
@@ -12,7 +12,7 @@ async function getLedger(branch) {
         const octokitRes = await octokit.rest.repos.getContent({
             owner: 'plamorg',
             repo: 'ghcoin',
-            path: 'ledger.csv',
+            path: '/ledger.csv',
             branch,
         });
 
