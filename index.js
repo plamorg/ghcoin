@@ -68,7 +68,7 @@ async function run() {
 
         // get json payload
         const payload = github.context.payload;
-        const pullreq = payload.pull_request
+        const pullreq = payload.pull_request;
 
         // get the old (current) ledger
         const oldLedger = await getLedger(pullreq.base.repo.owner.login, pullreq.base.ref, pullreq.base.repo.name);
