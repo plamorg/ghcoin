@@ -22,4 +22,5 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           MERGE_COMMIT_MESSAGE: "ghcoin: Process transaction ${pullRequest.number}"
+          MERGE_LABELS: ""
 
