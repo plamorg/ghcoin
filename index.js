@@ -3,6 +3,8 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const csv = require('csvtojson');
 
+// TEST TEST TEST!!
+
 const repoToken = core.getInput('repo-token');
 const changedFiles = core.getInput('changed-files');
 const octokit = github.getOctokit(repoToken);
