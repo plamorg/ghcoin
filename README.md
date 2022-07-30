@@ -1,2 +1,2 @@
 # ghcoin
-What if Github acts as a blockchain??
+What if Github acts as a blockchain?
