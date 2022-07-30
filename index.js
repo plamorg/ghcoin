@@ -22,12 +22,12 @@ async function setFailed(message) {
     process.exit();
 }
 
-async function getLedger(owner, branch) {
-    console.log(`getting ledger on owner ${owner} branch ${branch}`)
+async function getLedger(owner, branch, repo) {
+    console.log(`getting ledger on owner ${owner} branch ${branch} repo ${repo}`)
     try {
         const octokitRes = await octokit.rest.repos.getContent({
             owner: owner,
-            repo: 'ghcoin',
+            repo: repo,
             path: 'ledger.csv',
             ref: branch,
         });
@@ -68,12 +68,13 @@ async function run() {
 
         // get json payload
         const payload = github.context.payload;
+        const pullreq = payload.pull_request
 
         // get the old (current) ledger
-        const oldLedger = await getLedger('plamorg', 'master');
+        const oldLedger = await getLedger(pullreq.base.repo.owner.login, pullreq.base.ref, pullreq.base.repo.name);
 
         // get the new ledger
-        const newLedger = await getLedger(payload.pull_request.head.repo.owner.login, payload.pull_request.head.ref);
+        const newLedger = await getLedger(pullreq.head.repo.owner.login, pullreq.head.ref, pullreq.head.repo.name);
 
         // get the user who is making the transaction
         const user = github.context.actor;
