@@ -63,6 +63,7 @@ async function run() {
         let oldSum = 0, newSum = 0;
 
         for (let name in newLedger) {
+            console.log(name);
             // add current amount to the new sum
             newSum += newLedger[name];
 
@@ -95,7 +96,7 @@ async function run() {
             }
         }
 
-        console.log('checked new ledger')
+        console.log('checked new ledger');
 
         for (let name in oldLedger) {
             // add amount to old sum
