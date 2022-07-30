@@ -17,7 +17,7 @@ async function getLedger(branch) {
             ref: branch,
         });
         
-        console.log('octokit: ', octokitRes);
+        // console.log('octokit: ', octokitRes);
 
         // get the raw csv from github
         const res = await fetch(octokitRes.data.download_url);
