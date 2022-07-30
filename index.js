@@ -76,24 +76,16 @@ async function run() {
                 // case 1: new user
                 if (oldLedger[name] === undefined) continue;
                 // case 2: check amounts
-                if (oldLedger[name] < newLedger[name]) {
-                    core.setFailed('Cannot add balance to self');
-                    break; 
-                }
+                if (oldLedger[name] < newLedger[name]) core.setFailed('Cannot add balance to self');
             } else {
                 // different users
                 // so each user should have greater than or equal to the amount they had previously
                 
                 // case 1: new user
-                if (oldLedger[name] === undefined) {
-                    core.setFailed('Cannot add new users other than self');
-                    break;
-                }
+                if (oldLedger[name] === undefined) core.setFailed('Cannot add new users other than self');
+
                 // case 2: check amounts
-                if (oldLedger[name] > newLedger[name]) {
-                    core.setFailed('Cannot subtract balance of others');
-                    break;
-                }
+                else if (oldLedger[name] > newLedger[name]) core.setFailed('Cannot subtract balance of others');
             }
         }
 
@@ -104,10 +96,7 @@ async function run() {
             oldSum += oldLedger[name];
             
             // check if user has been deleted
-            if (newLedger[name] === undefined) {
-                core.setFailed('Cannot delete users');
-                break;
-            }
+            if (newLedger[name] === undefined) core.setFailed('Cannot delete users');
         }
 
         console.log('checked old ledger');
