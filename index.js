@@ -28,7 +28,7 @@ async function getLedger(branch) {
         for (let i of ledgerJsonRaw) {
             console.log(i.name, i.balance);
             if (ledgerJson[i.name]) core.setFailed(`Duplicate user: ${i.name} ${i.balance} ${ledgerJson[i.name]}`);
-            if (/^\d+$/.test(i.balance)) core.setFailed(`Invalid balance: ${i.name} ${i.balance}`);
+            if (!(/^\d+$/.test(i.balance))) core.setFailed(`Invalid balance: ${i.name} ${i.balance}`);
             ledgerJson[i.name] = parseInt(i.balance);
         }
 
