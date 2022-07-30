@@ -8,13 +8,13 @@ on:
 jobs:
   ghcoin-transaction:
     runs-on: ubuntu-latest
-    name: A job to process payments with ghcoin
+    name: Process ghcoin transactions
     steps:
-      - name: Hello world action step
+      - name: Validate transaction
         id: hello
         uses: plamorg/ghcoin@v1
         with:
-          who-to-greet: 'Mona the Octocat'
+          total-amount: '1000'
       # Use the output from the `hello` step
       - name: Get the output time
         run: echo "The time was ${{ steps.hello.outputs.time }}"
