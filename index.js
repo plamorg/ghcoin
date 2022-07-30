@@ -65,7 +65,6 @@ async function run() {
         let oldSum = 0, newSum = 0;
 
         for (let name in newLedger) {
-            console.log(name);
             // add current amount to the new sum
             newSum += newLedger[name];
 
