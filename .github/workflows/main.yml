@@ -2,8 +2,8 @@ on:
   pull_request:
     types:
       - opened
-    branches:    
-      - 'master'
+    branches:
+      - "master"
 
 jobs:
   ghcoin-transaction:
@@ -14,7 +14,8 @@ jobs:
         id: hello
         uses: plamorg/ghcoin@v1
         with:
-          total-amount: '1000'
+          total-amount: "1000"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       # Use the output from the `hello` step
       - name: Get the output time
         run: echo "The time was ${{ steps.hello.outputs.time }}"

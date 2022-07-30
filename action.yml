@@ -5,7 +5,6 @@ inputs:
         description: 'Total amount of ghcoin in circulation. The sum should be exactly this amount.'
         required: false
         default: '1000'
-outputs:
 runs:
     using: 'node16'
     main: 'index.js'
