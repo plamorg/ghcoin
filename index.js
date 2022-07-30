@@ -3,15 +3,29 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const csv = require('csvtojson');
 
-const totalAmount = core.getInput('total-amount');
 const repoToken = core.getInput('repo-token');
 const octokit = github.getOctokit(repoToken);
 
-async function getLedger(branch) {
-    console.log(`getting ledger on branch ${branch}`)
+async function setFailed(message) {
+    // set failed status on github actions
+    core.setFailed(message);
+
+    // leave a message on the PR saying that it failed
+    await octokit.rest.issues.createComment({
+        ...github.context.repo,
+        issue_number: github.context.payload.pull_request.number,
+        body: `Sorry, the transaction cannot proceed because of the following reason: ${message}.`
+    });
+
+    // quit script
+    process.exit();
+}
+
+async function getLedger(owner, branch) {
+    console.log(`getting ledger on owner ${owner} branch ${branch}`)
     try {
         const octokitRes = await octokit.rest.repos.getContent({
-            owner: 'plamorg',
+            owner: owner,
             repo: 'ghcoin',
             path: 'ledger.csv',
             ref: branch,
@@ -31,8 +45,8 @@ async function getLedger(branch) {
         let ledgerJson = {};
         for (let i of ledgerJsonRaw) {
             console.log(i.name, i.balance);
-            if (ledgerJson[i.name]) core.setFailed(`Duplicate user: ${i.name} ${i.balance} ${ledgerJson[i.name]}`);
-            if (!(/^\d+$/.test(i.balance))) core.setFailed(`Invalid balance: ${i.name} ${i.balance}`);
+            if (ledgerJson[i.name]) await setFailed(`Duplicate user: ${i.name} ${i.balance} ${ledgerJson[i.name]}`);
+            if (!(/^[0-9]+$/.test(i.balance))) await setFailed(`Invalid balance: ${i.name} ${i.balance}`);
             ledgerJson[i.name] = parseInt(i.balance);
         }
 
@@ -41,7 +55,7 @@ async function getLedger(branch) {
         return ledgerJson;
 
     } catch (error) {
-        core.setFailed(error.message);
+        await setFailed(error.message);
     }
 }
 
@@ -52,10 +66,10 @@ async function run() {
         const payload = github.context.payload;
 
         // get the old (current) ledger
-        const oldLedger = await getLedger('master');
+        const oldLedger = await getLedger('plamorg', 'master');
 
         // get the new ledger
-        const newLedger = await getLedger(payload.pull_request.head.ref);
+        const newLedger = await getLedger(payload.pull_request.head.owner.login, payload.pull_request.head.ref);
 
         // get the user who is making the transaction
         const user = github.context.actor;
@@ -76,16 +90,16 @@ async function run() {
                 // case 1: new user
                 if (oldLedger[name] === undefined) continue;
                 // case 2: check amounts
-                if (oldLedger[name] < newLedger[name]) core.setFailed('Cannot add balance to self');
+                if (oldLedger[name] < newLedger[name]) await setFailed('Cannot add balance to self');
             } else {
                 // different users
                 // so each user should have greater than or equal to the amount they had previously
                 
                 // case 1: new user
-                if (oldLedger[name] === undefined) core.setFailed('Cannot add new users other than self');
+                if (oldLedger[name] === undefined) await setFailed('Cannot add new users other than self');
 
                 // case 2: check amounts
-                else if (oldLedger[name] > newLedger[name]) core.setFailed('Cannot subtract balance of others');
+                else if (oldLedger[name] > newLedger[name]) await setFailed('Cannot subtract balance of others');
             }
         }
 
@@ -96,18 +110,18 @@ async function run() {
             oldSum += oldLedger[name];
             
             // check if user has been deleted
-            if (newLedger[name] === undefined) core.setFailed('Cannot delete users');
+            if (newLedger[name] === undefined) await setFailed('Cannot delete users');
         }
 
         console.log('checked old ledger');
 
         if (oldSum !== newSum) {
-            core.setFailed('Cannot modify total amount');
+            await setFailed('Cannot modify total amount');
         }
 
         console.log('checked sum');
     } catch (error) {
-        core.setFailed(error.message);
+        await setFailed(error.message);
     }
 
 }
