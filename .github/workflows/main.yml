@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Validate transaction
         id: hello
-        uses: plamorg/ghcoin@v1
+        uses: plamorg/ghcoin@master
         with:
           total-amount: "1000"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
