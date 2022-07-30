@@ -4,6 +4,9 @@ inputs:
     repo-token:
       description: 'Github token'
       required: true
+    changed-files:
+      description: 'Files that were changed'
+      required: false
 runs:
     using: 'node16'
     main: 'index.js'

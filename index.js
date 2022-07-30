@@ -4,6 +4,7 @@ const github = require('@actions/github');
 const csv = require('csvtojson');
 
 const repoToken = core.getInput('repo-token');
+const changedFiles = core.getInput('changed-files');
 const octokit = github.getOctokit(repoToken);
 
 async function setFailed(message) {
@@ -61,8 +62,11 @@ async function getLedger(owner, branch) {
 
 async function run() {
     try {
-        console.log('Hello World');
-        // Get the JSON webhook payload for the event that triggered the workflow
+        // make sure that ledger.csv is the only changed file
+        console.log(changedFiles);
+        if (changedFiles.length != 1 || changedFiles[0] !== 'ledger.csv') await setFailed('Cannot modify any files other than ledger.csv');
+
+        // get json payload
         const payload = github.context.payload;
 
         // get the old (current) ledger

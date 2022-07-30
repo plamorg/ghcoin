@@ -8,11 +8,15 @@ jobs:
     runs-on: ubuntu-latest
     name: Process ghcoin transactions
     steps:
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v24
       - name: Validate transaction
         id: hello
         uses: plamorg/ghcoin@master
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+          changed-files: ${{ steps.changed-files.outputs.all_changed_files }}
       - name: Merge pull request
         id: automerge
         uses: "pascalgn/automerge-action@v0.15.3"
