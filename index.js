@@ -12,12 +12,13 @@ async function getLedger(branch) {
         const octokitRes = await octokit.rest.repos.getContent({
             owner: 'plamorg',
             repo: 'ghcoin',
-            path: '/ledger.csv',
+            path: 'ledger.csv',
             branch,
         });
+        
+        console.log('download url: ', octokitRes.download_url);
 
         const res = await fetch(octokitRes.download_url);
-        console.log('download url: ', res);
         const ledgerCsv = await res.text();
         const ledgerJsonRaw = await csv().fromString(ledgerCsv);
 
