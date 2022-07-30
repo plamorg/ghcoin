@@ -2,6 +2,7 @@ const fetch = require('node-fetch');
 const core = require('@actions/core');
 const github = require('@actions/github');
 const csv = require('csvtojson');
+
 const totalAmount = core.getInput('total-amount');
 const repoToken = core.getInput('repo-token');
 const octokit = github.getOctokit(repoToken);
@@ -18,12 +19,15 @@ async function getLedger(branch) {
         
         console.log('octokit: ', octokitRes);
 
+        // get the raw csv from github
         const res = await fetch(octokitRes.data.download_url);
         const ledgerCsv = await res.text();
-        const ledgerJsonRaw = await csv().fromString(ledgerCsv);
 
+        // convert csv to json
+        const ledgerJsonRaw = await csv().fromString(ledgerCsv);
         console.log(ledgerJsonRaw);
 
+        // convert format into key-value (name: balance) and check that the csv is valid
         let ledgerJson = {};
         for (let i of ledgerJsonRaw) {
             console.log(i.name, i.balance);
@@ -46,11 +50,61 @@ async function run() {
         // Get the JSON webhook payload for the event that triggered the workflow
         const payload = github.context.payload;
 
-        // get the original ledger
-        const originalLedger = getLedger('master');
+        // get the old (current) ledger
+        const oldLedger = getLedger('master');
 
         // get the new ledger
         const newLedger = getLedger(payload.pull_request.head.ref);
+
+        // get the user who is making the transaction
+        const user = github.context.actor;
+
+        // total amounts circulating
+        let oldSum = 0, newSum = 0;
+
+        for (let name in newLedger) {
+            // add current amount to the new sum
+            newSum += newLedger[name];
+
+            if (name === user) {
+                // this is the transaction author
+                // therefore the new amount should be less than or equal to the old amount
+                // or it's a new user
+                                
+                // case 1: new user
+                if (oldLedger[name] === undefined) continue;
+                // case 2: check amounts
+                if (oldLedger[name] < newLedger[name]) {
+                    core.setFailed('Cannot add balance to self');
+                    break; 
+                }
+            } else {
+                // different users
+                // so each user should have greater than or equal to the amount they had previously
+                
+                // case 1: new user
+                if (oldLedger[name] === undefined) {
+                    core.setFailed('Cannot add new users other than self');
+                    break;
+                }
+                // case 2: check amounts
+                if (oldLedger[name] > newLedger[name]) {
+                    core.setFailed('Cannot subtract balance of others');
+                    break;
+                }
+            }
+        }
+
+        for (let name in oldLedger) {
+            // add amount to old sum
+            oldSum += oldLedger[name];
+            
+            // check if user has been deleted
+            if (newLedger[name] === undefined) {
+                core.setFailed('Cannot delete users');
+                break;
+            }
+        }
     } catch (error) {
         core.setFailed(error.message);
     }
