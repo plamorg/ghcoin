@@ -19,18 +19,16 @@ async function getLedger(branch) {
         console.log('octokit: ', octokitRes);
 
         const res = await fetch(octokitRes.data.download_url);
-        console.log(res);
-
         const ledgerCsv = await res.text();
-        console.log(ledgerCsv);
-
         const ledgerJsonRaw = await csv().fromString(ledgerCsv);
+
         console.log(ledgerJsonRaw);
 
         let ledgerJson = {};
         for (let i of ledgerJsonRaw) {
-            if (ledgerJson[i.name]) throw `Duplicate user: ${i.name} ${i.balance} ${ledgerJson[i.name]}`;
-            if (/^\d+$/.test(i.balance)) throw `Invalid balance: ${i.name} ${i.balance}`
+            console.log(i.name, i.balance);
+            if (ledgerJson[i.name]) core.setFailed(`Duplicate user: ${i.name} ${i.balance} ${ledgerJson[i.name]}`);
+            if (/^\d+$/.test(i.balance)) core.setFailed(`Invalid balance: ${i.name} ${i.balance}`);
             ledgerJson[i.name] = parseInt(i.balance);
         }
 
