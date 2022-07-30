@@ -1,2 +1,2 @@
-# gitcoin-ledger
-Public balance of gitcoin transactions
+# ghcoin
+What if Github acts as a blockchain?
