@@ -52,13 +52,11 @@ async function run() {
         const payload = github.context.payload;
 
         // get the old (current) ledger
-        const oldLedger = getLedger('master');
+        const oldLedger = await getLedger('master');
 
         // get the new ledger
-        const newLedger = getLedger(payload.pull_request.head.ref);
+        const newLedger = await getLedger(payload.pull_request.head.ref);
 
-        console.log('aaa', oldLedger, newLedger);
-        console.log('get user')
         // get the user who is making the transaction
         const user = github.context.actor;
 
