@@ -63,6 +63,7 @@ async function getLedger(owner, branch) {
 async function run() {
     try {
         // make sure that ledger.csv is the only changed file
+        console.log("changed files:", changedFiles);
         if (changedFiles !== 'ledger.csv') await setFailed('Cannot modify any files other than ledger.csv');
 
         // get json payload
