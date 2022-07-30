@@ -3,6 +3,6 @@
     "@actions/core": "^1.9.0",
     "@actions/github": "^5.0.3",
     "csvtojson": "^2.0.10",
-    "node-fetch": "^3.2.9"
+    "node-fetch": "^2.6.6"
   }
 }
