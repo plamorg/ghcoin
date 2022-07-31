@@ -6,59 +6,88 @@
 <h3 align="center">ghcoin</h3>
 <h4 align="center">Totally practical currency built on top of GitHub Actions</h3>
 
-A currency built on top of GitHub. Built for MLH [Hacking Birthday
-Bash](https://organize.mlh.io/participants/events/8331-hacking-birthday-bash).
-Also view the [ghcoin CLI](https://github.com/plamorg/ghcoin-cli) we also made
-for this hackathon.
+A totally practical currency built on top of GitHub + Actions.  
+Built for MLH [Hacking Birthday Bash](https://organize.mlh.io/participants/events/8331-hacking-birthday-bash).
+Also view the [ghcoin CLI](https://github.com/plamorg/ghcoin-cli) companion repository.
 
 ## Inspiration
 
-Git is a widely-used version control system implementing persistent hash trees
-as its primary data structure, providing an immutable cryptographic chain of
-records. We can observe a similarity to cryptocurrencies, so what if we decided
-to build one on top of Git commits? And how can we best use GitHub Actions to
-achieve this?
-
-In celebration of the hacker spirit, we decided to learn new and exciting
-technologies (GitHub Actions) and explore its cool unintended uses.
+A cryptocurrency at its heart is implemented as a distributed Merkle tree.
+Git is a version control system implemented with a distributed Merkle tree.
+In the true spirit of hacking, we decided to figure out what happens when we put the two together...
 
 ## Implementation
 
-Cryptocurrencies share a ledger that tracks transactions. In ghcoin, we track
-transactions with commits and store a ledger of GitHub users and their
-corresponding account balances. To create a new transaction, the ledger is
-edited to transfer currency units from one user to another. The change is
-committed, then a pull request to the centralized ledger is submitted. A CI
-GitHub Action then is run against the pull request to verify the transaction,
-namely:
+To make a cryptocurrency on top of Git, we need four things: some way to model
+transactions inside Git's distributed Merkle tree, some way to send modifications to the tree, an identification system,
+and some way to distribute the tree (i.e. spin up new nodes).
 
-- Only the transaction author is losing currency units
-- The transaction author is not gaining currency units
-- The sum of all currency units is the same
+### Modeling Transactions
 
-If the above are satisfied, the pull request is automatically merged, updating
-the centralized ledger and transaction history.
+For the first one, we can (ab)use the fact that Git mainly uses its Merkle tree for file modifications. 
+Cryptocurrencies act as a distributed ledger that tracks transactions, so we make that explicit; we track
+transactions with commits to a single file, `ledger.csv`, which keeps a ledger of all transactions. 
+To create a new transaction, a new commit is created in which the ledger is edited to transfer currency units from one user to another. 
+Of course, not all modifications to the ledger file are valid transactions, so we have to enforce the following requirements
+for a commit to be valid:
 
-Creating transactions would be tedious by itself: you would have to manually
+- The transaction author's balance is lower than their previous balance,
+- The other accounts in the ledger only have their balance increase or stay the same,
+- The total sum of the coins in the ledger comes up to the previous amount.
+
+Of course, how do we actually get people to send in modifications to the tree without granting global push
+access to our Git repository? This is where GitHub comes in.
+
+### Sending Modifications and Identification
+
+GitHub has a nice way of sending in commits that doesn't need to be preapproved ahead of time: pull requests. All one needs to do
+is send in a PR. This also provides an automatic identity system, as each GitHub account can now correspond to an account on the ledger.
+But how does the 'node' know whether or not to accept the transaction? For that we use GitHub Actions.
+An Actions workflow automatically reviews the PR, and if it passes the requirements listed above, it gets automatically merged.
+
+### Distributed Nodes
+
+So, of course, a cryptocurrency can only be distributed if you can spin up new nodes than just our repository. That's perfectly possible. GitHub provides
+an innate feature to split a repo: forks. And this works here too! If you click the fork button in the top right,
+you would immediately spin up a new node that can also accept transactions all by itself.
+Hard forks are built in to the currency!
+
+## UX
+
+Of course, creating transactions manually is fairly tedious: you have to manually
 edit the ledger and modify balances without disrupting the total sum of currency
-units. To resolve this, we created a command line interface (CLI) to rapidly and
-intuitively handle transactions for you. Completing transactions is as simple as
-running `ghcoin send priime0 100`; the CLI will automatically write the
-transaction and merge it into the centralized ledger.
+units. So we created a fancy command line interface to rapidly and
+intuitively handle transactions for you! Completing transactions is as simple as
+running `ghcoin send smjleo 100`; the CLI will automatically write the
+transaction and submit a PR to the ledger. Check it out at https://github.com/plamorg/ghcoin-cli.
+
+## Okay, but really, are there any actual use-cases for this?
+
+Surprisingly, there actually are. Since the GitHub Action can be trivially modified to execute custom handlers 
+when a pull request passes validation, it's possible to use the currency to actually do real world things.
+
+One example could be a friend group that wants to share a small savings fund, but also doesn't want any
+singular person to spend more money than they're allocated. The GitHub Action could be modified to invoke a payment
+API every PR, and automatically make the payment of real-world money from the author to the recipients, while simultaneously
+ensuring that nobody abuses the system by spending more than they have.
+
+Another example could be a gaming group who wants to establish a shared account of resources in an online video game.
+If the video game provides currency transfer APIs (for example, Eve Online), it's possible to modify the GitHub Action 
+such that when a PR is merged in-game currency automatically flows from the author to the recipients, and nobody can spend
+more than their share.
 
 ## Getting Started
 
 ### Prerequisites
 
-Our GitHub Action relies on:
-- JavaScript
-- GitHub Action JavaScript modules
-
 Our CLI utility/tool relies on:
 - Python 3.10+
 - Git
-- GitHub CLI tool
+- The `gh` GitHub CLI tool
 - Curl
+
+Our GitHub Action relies on:
+- Absolutely nothing! It's all included in this repository.
 
 ### Usage (CLI)
 
