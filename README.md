@@ -4,7 +4,7 @@
 </p>
 
 <h3 align="center">ghcoin</h3>
-<h4 align="center">Totally practical currency built on top of GitHub Actions</h3>
+<h4 align="center">A totally practical currency built on top of GitHub Actions</h3>
 
 Built for MLH [Hacking Birthday Bash](https://organize.mlh.io/participants/events/8331-hacking-birthday-bash).
 Also view the [ghcoin CLI](https://github.com/plamorg/ghcoin-cli) companion repository.
