@@ -66,6 +66,8 @@ intuitively handle transactions for you! Completing transactions is as simple as
 running `ghcoin send smjleo 100`; the CLI will automatically write the
 transaction and submit a PR to the ledger. Check it out at https://github.com/plamorg/ghcoin-cli.
 
+We also made a chain transaction viewer to enable a visualization of the chain. It shows all the transactions in the master branch along with all the PRs they come from. See a version hosted on GitHub Pages [here](https://plamorg.github.io/ghcoin-vis/).
+
 ## Okay, but really, are there any actual use-cases for this?
 
 Surprisingly, there actually are. Since the GitHub Action can be trivially modified to execute custom handlers 
