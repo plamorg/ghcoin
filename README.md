@@ -1,4 +1,10 @@
-# ghcoin
+<p align="center">
+  <a href="" rel="noopener">
+ <img src="./docs/logo.png" alt="ghcoin logo"></a>
+</p>
+
+<h3 align="center">ghcoin</h3>
+<h4 align="center">Totally practical currency built on top of GitHub Actions</h3>
 
 A currency built on top of GitHub. Built for MLH [Hacking Birthday
 Bash](https://organize.mlh.io/participants/events/8331-hacking-birthday-bash).
