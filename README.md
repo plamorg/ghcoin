@@ -9,6 +9,12 @@
 Built for MLH [Hacking Birthday Bash](https://organize.mlh.io/participants/events/8331-hacking-birthday-bash).
 Also view the [ghcoin CLI](https://github.com/plamorg/ghcoin-cli) companion repository.
 
+- [Inspiration](https://github.com/plamorg/ghcoin#inspiration)
+- [Implementation](https://github.com/plamorg/ghcoin#implementation)
+- [User Experience](https://github.com/plamorg/ghcoin#ux)
+- [Use Cases](https://github.com/plamorg/ghcoin#okay-but-really-are-there-any-actual-use-cases-for-this)
+- [Getting Started](https://github.com/plamorg/ghcoin#getting-started)
+
 ## Inspiration
 
 A cryptocurrency at its heart is implemented as a distributed Merkle tree.
